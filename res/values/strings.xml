@@ -10,6 +10,8 @@
 
     <string name="button_OK">OK</string>
     
+    <string name="task_title_string">Lista de Tarefas</string>
+    
     <string name="UPDATE_ERROR_AUTHORIZATION_FAILED_TITLE">Authorization Error</string>
     <string name="UPDATE_ERROR_PROJECT_SUSPENDED_TITLE">Authorization Error</string>
     <string name="UPDATE_ERROR_NO_NETWORK_CONNECTION_TITLE">Network Unavailable</string>
@@ -54,5 +56,6 @@
     <string name="menu_button_green">Green</string>
         
     <string name="splash_screen_description">Vuforia Splash</string>
+    
     
 </resources>

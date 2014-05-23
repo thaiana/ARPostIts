@@ -8,6 +8,7 @@ package com.qualcomm.vuforia.samples.VuforiaSamples.app.FrameMarkers;
 import java.util.Vector;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -15,14 +16,15 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -70,13 +72,28 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
     
     private GestureDetector mGestureDetector;
     
-    private SampleAppMenu mSampleAppMenu;
+    public GestureDetector getmGestureDetector() {
+		return mGestureDetector;
+	}
+
+
+	public void setmGestureDetector(GestureDetector mGestureDetector) {
+		this.mGestureDetector = mGestureDetector;
+	}
+
+	private SampleAppMenu mSampleAppMenu;
+    
+    int mId;
+    
+    TaskList tasks = new TaskList();
     
     private boolean mFlash = false;
     private boolean mContAutofocus = false;
     private boolean mIsFrontCameraActive = false;
     
     private View mFlashOptionView;
+    
+    ListView listview;
     
     private LoadingDialogHandler loadingDialogHandler = new LoadingDialogHandler(
         this);
@@ -85,7 +102,8 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
     
     
     // Called when the activity first starts or the user navigates back to an
-    // activity.
+    @SuppressWarnings("deprecation")
+	// activity.
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -99,7 +117,6 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         vuforiaAppSession
             .initAR(this, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         
-        mGestureDetector = new GestureDetector(this, new GestureListener());
         
         // Load any sample specific textures:
         mTextures = new Vector<Texture>();
@@ -107,42 +124,9 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
         
         mIsDroidDevice = android.os.Build.MODEL.toLowerCase().startsWith(
             "droid");
-    }
-    
-    // Process Single Tap event to trigger autofocus
-    private class GestureListener extends
-        GestureDetector.SimpleOnGestureListener
-    {
-        // Used to set autofocus one second after a manual focus is triggered
-        private final Handler autofocusHandler = new Handler();
         
-        
-        @Override
-        public boolean onDown(MotionEvent e)
-        {
-            return true;
-        }
-        
-        
-        @Override
-        public boolean onSingleTapUp(MotionEvent e)
-        {
-            // Generates a Handler to trigger autofocus
-            // after 1 second
-            autofocusHandler.postDelayed(new Runnable()
-            {
-                public void run()
-                {
-                    boolean result = CameraDevice.getInstance().setFocusMode(
-                        CameraDevice.FOCUS_MODE.FOCUS_MODE_TRIGGERAUTO);
-                    
-                    if (!result)
-                        Log.e("SingleTapUp", "Unable to trigger focus");
-                }
-            }, 1000L);
-            
-            return true;
-        }
+        mGestureDetector = new GestureDetector(new GestureListener());
+	
     }
     
     
@@ -638,4 +622,33 @@ public class FrameMarkers extends Activity implements SampleApplicationControl,
     {
         return mIsFrontCameraActive;
     }
+
+    
+	private class GestureListener extends
+	GestureDetector.SimpleOnGestureListener
+	{
+		
+		@Override
+		public boolean onDown(MotionEvent e)
+		{
+			return true;
+		}
+
+
+		@Override
+		public boolean onSingleTapUp(MotionEvent e)
+		{
+			
+			Intent it = new Intent();
+			it.setClass(FrameMarkers.this, TaskList.class);
+			startActivity(it); 
+			return true;
+
+
+		}
+	}
+	
 }
+
+
+
